@@ -1,0 +1,36 @@
+@@grammar    :: CMake
+@@whitespace :: //
+# @@parseinfo :: True
+
+# bracket_argument is removed due to difficulty to implement it in these rules;
+# unquoted_legacy is also removed because I don't want to spend time on it;
+
+# file_element        =  command:command_invocation line_ending | {bracket_comment|space}* line_ending;
+# argument            =  bracket_argument | quoted_argument | unquoted_argument;
+# bracket_comment     =  '#' bracket_argument;
+# bracket_argument    =  bracket_open bracket_content bracket_close;
+# bracket_content     =  /[A-z0-9_]+/;
+# bracket_open        =  '[' {'='}* '[';
+# bracket_close       =  ']' {'='}* ']';
+
+file                =  {file_element}*;
+file_element        =  command:command_invocation line_ending | {space}* line_ending;
+command_invocation  =  {space}* name:identifier {space}* '(' args:arguments ')';
+arguments           =  [arg:argument] {tail:separated_arguments}*;
+separated_arguments =  {separation}+ [arg:argument] | {separation}* '(' args:arguments ')';
+argument            =  quoted_argument | unquoted_argument;
+unquoted_argument   =  {unquoted_element}+;
+unquoted_element    =  /[^ \t\n\(\)#\"\\]+/ | escape_sequence;
+quoted_argument     =  '"' {quoted_element}* '"';
+quoted_element      =  /[^\\\"]+/ | escape_sequence | quoted_continuation;
+quoted_continuation =  '\' newline;
+escape_sequence     =  escape_identity | escape_encoded | escape_semicolon;
+separation          =  space | line_ending;
+line_ending         =  {space}* [line_comment] newline;
+line_comment        =  /#.*/;
+escape_identity     =  '\\' /[^A-Za-z0-9;]/;
+escape_encoded      =  '\\t' | '\\r' | '\\n';
+escape_semicolon    =  ';';
+identifier          =  /[A-Za-z_][A-Za-z0-9_]*/;
+space               =  /[ \t]+/;
+newline             =  /\n/;
