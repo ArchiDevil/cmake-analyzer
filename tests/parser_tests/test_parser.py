@@ -1,3 +1,5 @@
+import os
+
 from core import parser
 
 
@@ -30,3 +32,9 @@ def test_parser_can_parse_unquoted_quoted_cmake():
     args_desc = ['-DTEST="${SOMETHING}"']
     for i, arg in enumerate(command['args']):
         assert arg['arg'] == [args_desc[i]]
+
+
+def test_parser_can_save_model():
+    pp = parser.Parser('core/simple_grammar.ebnf')
+    pp.save_model('model.pyc') # .pyc to avoid this file to be commited to the repo
+    assert os.path.exists('model.pyc')

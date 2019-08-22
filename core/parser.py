@@ -14,10 +14,7 @@ class Parser(object):
         ast = self.model.parse(content)
         return ast
     
-    def save_model(self, out_file_model, out_file_source_code):
-        python_model = tatsu.to_python_model(self.model, filename=out_file_model)
+    def save_model(self, out_file_source_code):
         python_sourcecode = tatsu.to_python_sourcecode(self.model, filename=out_file_source_code)
-        with open(out_file_model, 'w') as fp:
-            fp.write(python_model)
         with open(out_file_source_code, 'w') as fp:
             fp.write(python_sourcecode)
