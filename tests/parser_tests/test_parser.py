@@ -2,6 +2,8 @@ import os
 
 from core import parser
 
+CURRENT_MODULE_PATH = os.path.dirname(__file__)
+
 
 def test_parser_can_load_grammar():
     pp = parser.Parser('core/simple_grammar.ebnf')
@@ -10,7 +12,7 @@ def test_parser_can_load_grammar():
 
 def test_parser_can_parse_simplest_cmake():
     pp = parser.Parser('core/simple_grammar.ebnf')
-    ast = pp.parse_file('tests/parser_tests/sample_cmake.txt')
+    ast = pp.parse_file(os.path.join(CURRENT_MODULE_PATH, 'sample_cmake.txt'))
     assert len(ast) == 1
     command = ast[0]['command']
     assert command['name'] == 'add_library'
@@ -23,7 +25,7 @@ def test_parser_can_parse_simplest_cmake():
 
 def test_parser_can_parse_space_after_command():
     pp = parser.Parser('core/simple_grammar.ebnf')
-    ast = pp.parse_file('tests/parser_tests/space_after_command.txt')
+    ast = pp.parse_file(os.path.join(CURRENT_MODULE_PATH, 'space_after_command.txt'))
     assert len(ast) == 1
     command = ast[0]['command']
     assert command['name'] == 'add_library'
@@ -36,7 +38,7 @@ def test_parser_can_parse_space_after_command():
 
 def test_parser_can_parse_unquoted_quoted_cmake():
     pp = parser.Parser('core/simple_grammar.ebnf')
-    ast = pp.parse_file('tests/parser_tests/unquoted_quoted.txt')
+    ast = pp.parse_file(os.path.join(CURRENT_MODULE_PATH, 'unquoted_quoted.txt'))
     assert len(ast) == 1
     command = ast[0]['command']
     assert command['name'] == 'add_definitions'
@@ -50,5 +52,5 @@ def test_parser_can_parse_unquoted_quoted_cmake():
 def test_parser_can_save_model():
     pp = parser.Parser('core/simple_grammar.ebnf')
     # .pyc to avoid this file to be commited to the repo
-    pp.save_model('model.pyc')
-    assert os.path.exists('model.pyc')
+    pp.save_model(os.path.join(CURRENT_MODULE_PATH, 'model.pyc'))
+    assert os.path.exists(os.path.join(CURRENT_MODULE_PATH, 'model.pyc'))
