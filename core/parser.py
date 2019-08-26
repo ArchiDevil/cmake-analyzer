@@ -1,7 +1,7 @@
 import tatsu
 import tatsu.model
 
-class Parser(object):
+class CMakeParser(object):
     def __init__(self, grammar_file):
         with open(grammar_file, 'r') as fp:
             grammar = fp.read()

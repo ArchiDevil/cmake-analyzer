@@ -26,7 +26,7 @@ def test_modules_loader_loads_only_valid_checkers():
     assert len(checkers) == 2
     for checker in checkers:
         try:
-            checker.process({})
+            checker.process({}, '', '')
         except NotImplementedError:
             # one of the test classes is not implemented intentionally
             pass
