@@ -31,10 +31,4 @@ def test_modules_loader_can_load_some_checker():
 def test_modules_loader_loads_only_valid_checkers():
     loader = modules_loader.ModulesLoader(TEST_MODULES_PATH)
     checkers = loader.loaded_checkers
-    assert len(checkers) == 2
-    for checker in checkers:
-        try:
-            checker.process({}, '', '')
-        except NotImplementedError:
-            # one of the test classes is not implemented intentionally
-            pass
+    assert len(checkers) == 3

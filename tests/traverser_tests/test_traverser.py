@@ -17,13 +17,31 @@ class SimpleReporter(object):
         self.end_marker = True
 
 
-class SimpleChecker(object):
+class SimpleCheckerFile(object):
     def __init__(self):
         self.checked_modules = []
 
-    def process(self, ast, root_directory, filename):
+    def process_file(self, ast, root_directory, filename):
         assert not os.path.isabs(filename)
         self.checked_modules.append(filename)
+        return []
+
+
+class SimpleCheckerDirectory(object):
+    def __init__(self):
+        self.checked_dirs = []
+
+    def process_directory(self, root_directory, dirname):
+        self.checked_dirs.append(os.path.join(root_directory, dirname))
+        return []
+
+
+class SimpleCheckerEndProcessing(object):
+    def __init__(self):
+        self.marker = False
+
+    def end_processing(self):
+        self.marker = True
         return []
 
 
@@ -50,7 +68,7 @@ def test_traverser_can_parse_simple_directory():
 
 
 def test_traverser_checks_each_correct_file():
-    checker = SimpleChecker()
+    checker = SimpleCheckerFile()
     p = parser.CMakeParser('core/simple_grammar.ebnf')
     t = traverser.Traverser(p, checkers=[checker])
     t.traverse(os.path.join(CURRENT_MODULE_PATH, 'complex_folder'))
@@ -58,7 +76,7 @@ def test_traverser_checks_each_correct_file():
 
 
 def test_traverser_skips_excluded_files():
-    checker = SimpleChecker()
+    checker = SimpleCheckerFile()
     p = parser.CMakeParser('core/simple_grammar.ebnf')
     t = traverser.Traverser(
         p, checkers=[checker], exclude_filters=['*subfolder*'])
@@ -67,7 +85,7 @@ def test_traverser_skips_excluded_files():
 
 
 def test_traverser_includes_only_specified_files():
-    checker = SimpleChecker()
+    checker = SimpleCheckerFile()
     p = parser.CMakeParser('core/simple_grammar.ebnf')
     t = traverser.Traverser(
         p, checkers=[checker], include_filters=['*subfolder*'])
@@ -118,3 +136,30 @@ def test_traverser_print_files_in_verbose_mode():
     builtins.print = Checker.checker
     t.traverse(os.path.join(CURRENT_MODULE_PATH, 'simple_folder'))
     assert Checker.invocations == 1
+
+
+def test_traverser_correctly_process_dirs():
+    checker = SimpleCheckerDirectory()
+    p = parser.CMakeParser('core/simple_grammar.ebnf')
+    t = traverser.Traverser(p, checkers=[checker])
+    t.traverse(os.path.join(CURRENT_MODULE_PATH, 'complex_folder'))
+    assert len(checker.checked_dirs) == 3
+
+
+def test_traverser_correctly_ends():
+    checker = SimpleCheckerEndProcessing()
+    p = parser.CMakeParser('core/simple_grammar.ebnf')
+    t = traverser.Traverser(p, checkers=[checker])
+    t.traverse(os.path.join(CURRENT_MODULE_PATH, 'complex_folder'))
+    assert checker.marker
+
+
+def test_traverser_works_with_many_checkers():
+    checkers = [SimpleCheckerFile(), SimpleCheckerDirectory(),
+                SimpleCheckerEndProcessing()]
+    p = parser.CMakeParser('core/simple_grammar.ebnf')
+    t = traverser.Traverser(p, checkers=checkers)
+    t.traverse(os.path.join(CURRENT_MODULE_PATH, 'complex_folder'))
+    assert len(checkers[0].checked_modules) == 3
+    assert len(checkers[1].checked_dirs) == 3
+    assert checkers[2].marker

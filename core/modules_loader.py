@@ -15,13 +15,21 @@ class ModulesLoader(object):
         self.filters = filters
         self.__load_modules()
 
+    def __check_imported_checker(self, checker):
+        for attribute in ['process_directory', 'process_file', 'end_processing']:
+            attr = getattr(checker, attribute, None)
+            if attr and callable(attr):
+                return True
+        return False
+
     def __load_checkers(self, module):
         classes = inspect.getmembers(module, inspect.isclass)
         for _, class_type in classes:
             if class_type.__bases__[0] == core.module_base.SingleFileChecker:
                 class_object = class_type()
-                self.checkers.append(class_object)
-                
+                if self.__check_imported_checker(class_object):
+                    self.checkers.append(class_object)
+
     def __match_filters(self, filename):
         for filter_ in self.filters:
             match_result = fnmatch.fnmatch(filename, filter_)

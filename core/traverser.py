@@ -48,6 +48,23 @@ class Traverser(object):
                 return True
         return False
 
+    def __process_file(self, root_path, full_path):
+        if self.verbose:
+            print('Processing {}'.format(full_path))
+
+        diagnostics = []
+        ast = self.parser.parse_file(full_path)
+
+        for checker in self.checkers:
+            if getattr(checker, 'process_file', None):
+                results = checker.process_file(ast=ast,
+                                               root_directory=root_path,
+                                               filename=os.path.relpath(full_path, root_path))
+                diagnostics += results
+
+        for reporter in self.reporters:
+            reporter.report(diagnostics)
+
     def traverse(self, path):
         root_cmake = None
         root_path = None
@@ -61,6 +78,16 @@ class Traverser(object):
                 'CMakeLists.txt has not been found in {}'.format(path))
 
         for dirname, _, filenames in os.walk(path):
+            diagnostics = []
+            for checker in self.checkers:
+                if getattr(checker, 'process_directory', None):
+                    results = checker.process_directory(root_directory=root_path,
+                                                        dirname=dirname)
+                    diagnostics += results
+
+            for reporter in self.reporters:
+                reporter.report(diagnostics)
+
             for filename in filenames:
                 full_path = os.path.join(dirname, filename)
 
@@ -73,19 +100,14 @@ class Traverser(object):
                 if not re.findall(r'(CMakeLists\.txt|.*\.cmake)', filename):
                     continue
 
-                if self.verbose:
-                    print('Processing {}'.format(full_path))
+                self.__process_file(root_path, full_path)
 
-                diagnostics = []
-                ast = self.parser.parse_file(full_path)
-
-                for checker in self.checkers:
-                    results = checker.process(
-                        ast, root_path, os.path.relpath(full_path, root_path))
-                    diagnostics += results
-
-                for reporter in self.reporters:
-                    reporter.report(diagnostics)
+        diagnostics = []
+        for checker in self.checkers:
+            if getattr(checker, 'end_processing', None):
+                results = checker.end_processing()
+                diagnostics += results
 
         for reporter in self.reporters:
+            reporter.report(diagnostics)
             reporter.end()
