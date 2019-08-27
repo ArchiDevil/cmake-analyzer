@@ -15,7 +15,7 @@ def test_modules_loader_can_load_some_modules():
 
 
 def test_modules_loader_applies_filter_to_modules():
-    loader = modules_loader.ModulesLoader(TEST_MODULES_PATH, 'test*')
+    loader = modules_loader.ModulesLoader(TEST_MODULES_PATH, ['test*'])
     modules = loader.loaded_modules
     assert len(modules) == 1
     for module in modules:

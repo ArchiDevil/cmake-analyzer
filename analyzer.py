@@ -5,22 +5,41 @@ import sys
 
 from core import *
 
+
 def main():
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('path', type=str)
+    argparser.add_argument('-c', '--checks',
+                           help='enable checks in the following format: style* legacy*',
+                           default=['*'],
+                           nargs='+',
+                           type=str)
+
+    me_group = argparser.add_mutually_exclusive_group(required=True)
+    me_group.add_argument('-p', '--path',
+                          help='path to start check from',
+                          type=str)
+    me_group.add_argument('-lc', '--list-checks',
+                          help='list all available checks',
+                          action='store_true')
+
     args = argparser.parse_args()
-    
-    traverser = parser.Parser('core/simple_grammar.ebnf')
+
+    if args.list_checks:
+        loader = modules_loader.ModulesLoader('modules', args.checks)
+        for module in loader.loaded_modules:
+            print(module.__name__)
+        exit()
+
+    loader = modules_loader.ModulesLoader('modules')
+    file_parser = parser.CMakeParser('core/simple_grammar.ebnf')
+    project_traverser = traverser.Traverser(
+        file_parser, checkers=loader.loaded_checkers)
     try:
-        ast = traverser.parse_file(args.path)
+        project_traverser.traverse(args.path)
     except Exception as e:
         print(e)
         exit()
 
-    for element in ast:
-        if 'command' in element:
-            command = element['command']
-            print('{} #{}'.format(command['name'], command['parseinfo'].line))
 
 if __name__ == '__main__':
     main()
