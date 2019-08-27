@@ -57,6 +57,35 @@ def test_traverser_checks_each_correct_file():
     assert len(checker.checked_modules) == 3
 
 
+def test_traverser_skips_excluded_files():
+    checker = SimpleChecker()
+    p = parser.CMakeParser('core/simple_grammar.ebnf')
+    t = traverser.Traverser(
+        p, checkers=[checker], exclude_filters=['*subfolder*'])
+    t.traverse(os.path.join(CURRENT_MODULE_PATH, 'complex_folder'))
+    assert len(checker.checked_modules) == 2
+
+
+def test_traverser_includes_only_specified_files():
+    checker = SimpleChecker()
+    p = parser.CMakeParser('core/simple_grammar.ebnf')
+    t = traverser.Traverser(
+        p, checkers=[checker], include_filters=['*subfolder*'])
+    t.traverse(os.path.join(CURRENT_MODULE_PATH, 'complex_folder'))
+    assert len(checker.checked_modules) == 1
+
+
+def test_traverser_does_not_allow_to_set_includes_and_excludes_simultaneously():
+    p = parser.CMakeParser('core/simple_grammar.ebnf')
+    marker = False
+    try:
+        t = traverser.Traverser(
+            p, include_filters=['*'], exclude_filters=['*'])
+    except ValueError:
+        marker = True
+    assert marker
+
+
 def test_traverser_raises_error_on_wrong_root_dir():
     p = parser.CMakeParser('core/simple_grammar.ebnf')
     t = traverser.Traverser(p)

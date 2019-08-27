@@ -1,6 +1,7 @@
 from enum import Enum
 import os
 import re
+import fnmatch
 
 from .parser import CMakeParser
 from reporters import simple
@@ -11,15 +12,41 @@ class Mode(Enum):
 
 
 class Traverser(object):
-    def __init__(self, parser: CMakeParser, checkers=[], reporters=[simple.SimpleReporter()], mode=Mode.GLOBAL, verbose=False):
+    def __init__(self,
+                 parser: CMakeParser,
+                 checkers=[],
+                 reporters=[simple.SimpleReporter()],
+                 include_filters=None,
+                 exclude_filters=None,
+                 mode=Mode.GLOBAL,
+                 verbose=False):
         if not parser or not isinstance(parser, CMakeParser):
             raise TypeError('parser argument must be of type CMakeParser()')
+
+        if include_filters and exclude_filters:
+            raise ValueError(
+                'include_filters and exclude_filters cannot be set at the same time')
+
+        if not exclude_filters and not include_filters:
+            include_filters = ['*']
 
         self.mode = mode
         self.parser = parser
         self.checkers = checkers
         self.reporters = reporters
         self.verbose = verbose
+        self.include_filters = include_filters
+        self.exclude_filters = exclude_filters
+
+    @staticmethod
+    def __in_filter(filters, path):
+        if not filters:
+            return False
+
+        for filter_ in filters:
+            if fnmatch.fnmatch(path, filter_):
+                return True
+        return False
 
     def traverse(self, path):
         root_cmake = None
@@ -35,19 +62,26 @@ class Traverser(object):
 
         for dirname, _, filenames in os.walk(path):
             for filename in filenames:
+                full_path = os.path.join(dirname, filename)
+
+                if Traverser.__in_filter(self.exclude_filters, full_path):
+                    continue
+
+                if self.include_filters and not Traverser.__in_filter(self.include_filters, full_path):
+                    continue
+
                 if not re.findall(r'(CMakeLists\.txt|.*\.cmake)', filename):
                     continue
 
                 if self.verbose:
-                    print('Processing {}'.format(
-                        os.path.join(dirname, filename)))
+                    print('Processing {}'.format(full_path))
 
                 diagnostics = []
-                ast = self.parser.parse_file(os.path.join(dirname, filename))
+                ast = self.parser.parse_file(full_path)
 
                 for checker in self.checkers:
-                    results = checker.process(ast, root_path, os.path.relpath(
-                        os.path.join(dirname, filename), root_path))
+                    results = checker.process(
+                        ast, root_path, os.path.relpath(full_path, root_path))
                     diagnostics += results
 
                 for reporter in self.reporters:
