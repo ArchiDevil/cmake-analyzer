@@ -1,7 +1,9 @@
+import builtins
 import os
 from core import parser, traverser
 
 CURRENT_MODULE_PATH = os.path.dirname(__file__)
+
 
 class SimpleReporter(object):
     def __init__(self):
@@ -71,3 +73,19 @@ def test_traverser_tells_reporters_end_on_end_processing():
     t = traverser.Traverser(p, reporters=[reporter])
     t.traverse(os.path.join(CURRENT_MODULE_PATH, 'simple_folder'))
     assert reporter.end_marker
+
+
+def test_traverser_print_files_in_verbose_mode():
+    class Checker(object):
+        invocations = 0
+
+        @staticmethod
+        def checker(*args):
+            Checker.invocations += 1
+            assert os.path.exists(args[0].split()[-1])
+
+    p = parser.CMakeParser('core/simple_grammar.ebnf')
+    t = traverser.Traverser(p, verbose=True)
+    builtins.print = Checker.checker
+    t.traverse(os.path.join(CURRENT_MODULE_PATH, 'simple_folder'))
+    assert Checker.invocations == 1

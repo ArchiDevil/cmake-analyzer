@@ -13,6 +13,9 @@ def main():
                            default=['*'],
                            nargs='+',
                            type=str)
+    argparser.add_argument('-v', '--verbose',
+                           help='enable verbose logging for large projects',
+                           action='store_true')
 
     me_group = argparser.add_mutually_exclusive_group(required=True)
     me_group.add_argument('-p', '--path',
@@ -32,13 +35,11 @@ def main():
 
     loader = modules_loader.ModulesLoader('modules')
     file_parser = parser.CMakeParser('core/simple_grammar.ebnf')
-    project_traverser = traverser.Traverser(
-        file_parser, checkers=loader.loaded_checkers)
-    try:
-        project_traverser.traverse(args.path)
-    except Exception as e:
-        print(e)
-        exit()
+    project_traverser = traverser.Traverser(file_parser,
+                                            checkers=loader.loaded_checkers,
+                                            verbose=True if args.verbose else False)
+
+    project_traverser.traverse(args.path)
 
 
 if __name__ == '__main__':

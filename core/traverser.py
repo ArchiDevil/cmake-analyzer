@@ -3,6 +3,7 @@ import os
 import re
 
 from .parser import CMakeParser
+from reporters import simple
 
 
 class Mode(Enum):
@@ -10,7 +11,7 @@ class Mode(Enum):
 
 
 class Traverser(object):
-    def __init__(self, parser: CMakeParser, checkers=[], reporters=[], mode=Mode.GLOBAL):
+    def __init__(self, parser: CMakeParser, checkers=[], reporters=[simple.SimpleReporter()], mode=Mode.GLOBAL, verbose=False):
         if not parser or not isinstance(parser, CMakeParser):
             raise TypeError('parser argument must be of type CMakeParser()')
 
@@ -18,6 +19,7 @@ class Traverser(object):
         self.parser = parser
         self.checkers = checkers
         self.reporters = reporters
+        self.verbose = verbose
 
     def traverse(self, path):
         root_cmake = None
@@ -35,6 +37,10 @@ class Traverser(object):
             for filename in filenames:
                 if not re.findall(r'(CMakeLists\.txt|.*\.cmake)', filename):
                     continue
+
+                if self.verbose:
+                    print('Processing {}'.format(
+                        os.path.join(dirname, filename)))
 
                 diagnostics = []
                 ast = self.parser.parse_file(os.path.join(dirname, filename))
