@@ -39,8 +39,8 @@ arguments
 
 separated_arguments
     =
-    | {separation}* [arg:argument]
     | {separation}* '(' args:arguments ')'
+    | {separation}* [arg:argument]
     ;
 
 argument

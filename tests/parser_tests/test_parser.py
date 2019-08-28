@@ -54,3 +54,9 @@ def test_parser_can_save_model():
     # .pyc to avoid this file to be commited to the repo
     pp.save_model(os.path.join(CURRENT_MODULE_PATH, 'model.pyc'))
     assert os.path.exists(os.path.join(CURRENT_MODULE_PATH, 'model.pyc'))
+
+
+def test_parser_handles_corner_cases():
+    pp = parser.CMakeParser('core/simple_grammar.ebnf')
+    ast = pp.parse_file(os.path.join(CURRENT_MODULE_PATH, 'corner_case1.txt'))
+    assert len(ast) == 3
