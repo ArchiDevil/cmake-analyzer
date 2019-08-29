@@ -8,12 +8,13 @@ import core.module_base
 
 
 class ModulesLoader(object):
-    def __init__(self, modules_path, filters=['*']):
-        self.modules_path = modules_path
+    def __init__(self, modules_paths, filters=['*']):
+        self.modules_paths = modules_paths
         self.modules = []
         self.checkers = []
         self.filters = filters
-        self.__load_modules()
+        for path in self.modules_paths:
+            self.__load_modules(path)
 
     def __check_imported_checker(self, checker):
         for attribute in ['process_directory', 'process_file', 'end_processing']:
@@ -37,9 +38,9 @@ class ModulesLoader(object):
                 return False
         return True
 
-    def __load_modules(self):
-        sys.path.append(self.modules_path)
-        for filename in os.listdir(self.modules_path):
+    def __load_modules(self, path):
+        sys.path.append(path)
+        for filename in os.listdir(path):
             if not self.__match_filters(filename):
                 continue
 

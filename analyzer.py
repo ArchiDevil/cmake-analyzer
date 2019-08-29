@@ -16,6 +16,11 @@ def main():
     argparser.add_argument('-v', '--verbose',
                            help='enable verbose logging for large projects',
                            action='store_true')
+    argparser.add_argument('--custom-checks',
+                           metavar='PATH',
+                           help='directory with user-defined checks',
+                           default=None,
+                           type=str)
 
     me_group_action = argparser.add_mutually_exclusive_group(required=True)
     me_group_action.add_argument('-p', '--path',
@@ -45,13 +50,17 @@ def main():
     if exclude_filters:
         include_filters = None
 
+    modules_list = ['modules']
+    if args.custom_checks:
+        modules_list.append(args.custom_checks)
+
     if args.list_checks:
-        loader = modules_loader.ModulesLoader('modules', args.checks)
+        loader = modules_loader.ModulesLoader(modules_list)
         for module in loader.loaded_modules:
             print(module.__name__)
         exit()
 
-    loader = modules_loader.ModulesLoader('modules')
+    loader = modules_loader.ModulesLoader(modules_list, args.checks)
     file_parser = parser.CMakeParser('core/simple_grammar.ebnf')
     project_traverser = traverser.Traverser(file_parser,
                                             checkers=loader.loaded_checkers,
