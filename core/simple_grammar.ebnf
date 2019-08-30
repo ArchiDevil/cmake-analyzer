@@ -1,6 +1,7 @@
-@@grammar    :: CMake
-@@whitespace :: //
-@@parseinfo :: True
+@@grammar     :: CMake
+@@whitespace  :: //
+@@parseinfo   :: True
+@@eol_comments:: /#.*$/
 
 # bracket_argument is removed due to difficulty to implement it in these rules;
 # unquoted_legacy is also removed because I don't want to spend time on it;
@@ -21,7 +22,7 @@ file
 file_element
     =
     | command:command_invocation line_ending
-    | {space}* line_ending
+    | {space}* empty:line_ending
     ;
 
 command_invocation
@@ -94,12 +95,7 @@ separation
 
 line_ending
     =
-    {space}* [line_comment] (newline | $)
-    ;
-
-line_comment
-    =
-    /#.*/
+    [space] (newline | $)
     ;
 
 escape_identity
