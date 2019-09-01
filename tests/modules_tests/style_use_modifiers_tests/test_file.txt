@@ -1,0 +1,14 @@
+add_library(test STATIC main.cpp)
+
+target_link_libraries(test PUBLIC other_target PRIVATE private_target)
+target_link_libraries(test
+    PUBLIC
+        great_target
+    PRIVATE
+        even_better_target
+    ) # another correct command
+
+target_link_libraries(test violation)
+empty_command()
+
+TARGET_LINK_LIBRARIES(test wrong_target)
