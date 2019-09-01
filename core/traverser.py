@@ -3,7 +3,8 @@ import os
 import re
 import fnmatch
 
-from .parser import CMakeParser
+from core.parser import CMakeParser
+from core.reporter_base import create_full_diagnostic
 from reporters import simple
 
 
@@ -60,7 +61,9 @@ class Traverser(object):
                 results = checker.process_file(ast=ast,
                                                root_directory=root_path,
                                                filename=os.path.relpath(full_path, root_path))
-                diagnostics += results
+                for result in results:
+                    diagnostics.append(create_full_diagnostic(
+                        result, full_path, checker.__module__))
 
         for reporter in self.reporters:
             reporter.report(diagnostics)

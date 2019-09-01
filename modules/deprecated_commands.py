@@ -1,7 +1,8 @@
 import os
 
 from core import module_base
-from core.reporter_base import create_diagnostic_from_node
+from core.reporter_base import create_diagnostic
+
 
 class DeprecatedCommandsChecker(module_base.SingleFileChecker):
     deprecated_commands = ['build_name',
@@ -33,10 +34,8 @@ class DeprecatedCommandsChecker(module_base.SingleFileChecker):
             command_name = node['command']['name'].lower()
 
             if command_name in DeprecatedCommandsChecker.deprecated_commands:
-                diag = create_diagnostic_from_node(node,
-                                                   os.path.join(
-                                                       root_directory, filename),
-                                                   "Command {} is deprecated, consider removing it.".format(command_name))
+                diag = create_diagnostic(node,
+                                         "Command {} is deprecated, consider removing it.".format(command_name))
                 diags.append(diag)
 
         return diags

@@ -1,7 +1,7 @@
 import os
 
 from core import module_base
-from core.reporter_base import create_diagnostic_from_node
+from core.reporter_base import create_diagnostic
 
 
 class VersionUsageChecker(module_base.SingleFileChecker):
@@ -14,13 +14,13 @@ class VersionUsageChecker(module_base.SingleFileChecker):
 
     @staticmethod
     def __process_minimum_required(filename, command_node):
-        return [create_diagnostic_from_node(command_node, filename, VersionUsageChecker.minimum_required_error)]
+        return [create_diagnostic(command_node, VersionUsageChecker.minimum_required_error)]
 
     @staticmethod
     def __process_policy(filename, command_node):
         if command_node['args'][0]['arg'][0].upper() != 'VERSION':
             return []
-        return [create_diagnostic_from_node(command_node, filename, VersionUsageChecker.policy_error)]
+        return [create_diagnostic(command_node, VersionUsageChecker.policy_error)]
 
     def process_file(self, ast, root_directory, filename):
         diags = []

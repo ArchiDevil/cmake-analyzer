@@ -1,7 +1,7 @@
 import os
 
 from core import module_base
-from core.reporter_base import create_diagnostic_from_node
+from core.reporter_base import create_diagnostic
 
 
 class AccessModifiersChecker(module_base.SingleFileChecker):
@@ -24,7 +24,8 @@ class AccessModifiersChecker(module_base.SingleFileChecker):
                         found = True
 
                 if not found:
-                    diag = create_diagnostic_from_node(node, os.path.join(root_directory, filename), AccessModifiersChecker.error)
+                    diag = create_diagnostic(
+                        node, AccessModifiersChecker.error)
                     diags.append(diag)
 
         return diags

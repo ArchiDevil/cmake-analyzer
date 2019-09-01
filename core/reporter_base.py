@@ -1,7 +1,16 @@
 from collections import namedtuple
 
-Diagnostic = namedtuple('Diagnostic', 'file line message')
+SimpleDiagnostic = namedtuple('SimpleDiagnostic', ['line', 'message'])
+Diagnostic = namedtuple('Diagnostic', ['file', 'line', 'message', 'module'])
 
-def create_diagnostic_from_node(node, file, message):
+
+def create_diagnostic(node,
+                      message: str) -> SimpleDiagnostic:
     parse_info = node['parseinfo']
-    return Diagnostic(file, parse_info.line + 1, message)
+    return SimpleDiagnostic(parse_info.line + 1, message)
+
+
+def create_full_diagnostic(simple_diagnostic: SimpleDiagnostic,
+                           abs_file_path: str,
+                           module_name: str) -> Diagnostic:
+    return Diagnostic(abs_file_path, simple_diagnostic.line, simple_diagnostic.message, module_name)

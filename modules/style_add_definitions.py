@@ -1,7 +1,7 @@
 import os
 
 from core import module_base
-from core.reporter_base import create_diagnostic_from_node
+from core.reporter_base import create_diagnostic
 
 
 class AddDefinitionsFinder(module_base.SingleFileChecker):
@@ -15,7 +15,7 @@ class AddDefinitionsFinder(module_base.SingleFileChecker):
                 continue
 
             if node['command']['name'].lower() == 'add_definitions':
-                diags.append(create_diagnostic_from_node(
-                    node, filename, AddDefinitionsFinder.error))
+                diags.append(create_diagnostic(
+                    node, AddDefinitionsFinder.error))
 
         return diags

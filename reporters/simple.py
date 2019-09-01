@@ -1,5 +1,6 @@
 from core import reporter_base
 
+
 class SimpleReporter(object):
     def report(self, iterable):
         for diag in iterable:

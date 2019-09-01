@@ -1,6 +1,10 @@
+from core import parser, traverser, reporter_base
 import builtins
 import os
-from core import parser, traverser
+from collections import namedtuple
+
+Parseinfo = namedtuple('Parseinfo', 'line')
+
 
 CURRENT_MODULE_PATH = os.path.dirname(__file__)
 
@@ -24,7 +28,13 @@ class SimpleCheckerFile(object):
     def process_file(self, ast, root_directory, filename):
         assert not os.path.isabs(filename)
         self.checked_modules.append(filename)
-        return []
+        return [
+            reporter_base.create_full_diagnostic(
+                reporter_base.create_diagnostic(
+                    {'parseinfo': Parseinfo(0)}, 'test'),
+                '/path',
+                'module')
+        ]
 
 
 class SimpleCheckerDirectory(object):
@@ -133,9 +143,11 @@ def test_traverser_print_files_in_verbose_mode():
 
     p = parser.CMakeParser('core/simple_grammar.ebnf')
     t = traverser.Traverser(p, verbose=True)
+    old_print = builtins.print
     builtins.print = Checker.checker
     t.traverse(os.path.join(CURRENT_MODULE_PATH, 'simple_folder'))
     assert Checker.invocations == 1
+    builtins.print = old_print
 
 
 def test_traverser_correctly_process_dirs():
