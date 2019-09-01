@@ -1,0 +1,4 @@
+add_definitions(-DTEST)
+ADD_DEFINITIONS(-DTEST)
+
+another_command("should_not_be_found")
