@@ -1,1 +1,2 @@
 include cmake_analyzer/static/*.ebnf
+include cmake_analyzer/modules/*
