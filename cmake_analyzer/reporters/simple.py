@@ -1,4 +1,4 @@
-from core import reporter_base
+from ..core import reporter_base
 
 
 class SimpleReporter(object):

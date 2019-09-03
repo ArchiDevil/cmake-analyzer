@@ -2,11 +2,15 @@ import argparse
 import tatsu
 import json
 import sys
+import os
+from typing import Tuple
 
-from core import *
+from .core import *
+
+CURRENT_FILE_DIR = os.path.dirname(__file__)
 
 
-def main():
+def create_parser() -> argparse.ArgumentParser:
     argparser = argparse.ArgumentParser()
     argparser.add_argument('-c', '--checks',
                            help='enable checks in the following format: style* legacy*',
@@ -41,8 +45,11 @@ def main():
                                               default=['*'],
                                               nargs='+',
                                               type=str)
+    return argparser
 
-    args = argparser.parse_args()
+
+def parse_args(parser, args) -> Tuple[list, list, list, bool, list, bool, str]:
+    args = parser.parse_args(args)
 
     include_filters = args.include
     exclude_filters = args.exclude
@@ -50,26 +57,33 @@ def main():
     if exclude_filters:
         include_filters = None
 
-    modules_list = ['modules']
+    modules_list = [os.path.join(CURRENT_FILE_DIR, 'modules')]
     if args.custom_checks:
         modules_list.append(args.custom_checks)
 
-    if args.list_checks:
-        loader = modules_loader.ModulesLoader(modules_list)
+    do_list_checks = True if args.list_checks else False
+
+    return include_filters, exclude_filters, modules_list, do_list_checks, args.checks, args.verbose, args.path
+
+
+def main():
+    argparser = create_parser()
+    includes, excludes, modules, do_list_checks, checks, is_verbose, path = parse_args(
+        argparser, sys.argv[1:])
+
+    if do_list_checks:
+        loader = modules_loader.ModulesLoader(modules)
         for module in loader.loaded_modules:
             print(module.__name__)
-        exit()
+        return
 
-    loader = modules_loader.ModulesLoader(modules_list, args.checks)
-    file_parser = parser.CMakeParser('core/simple_grammar.ebnf')
+    loader = modules_loader.ModulesLoader(modules, checks)
+    file_parser = parser.CMakeParser(os.path.join(
+        CURRENT_FILE_DIR, 'static', 'simple_grammar.ebnf'))
     project_traverser = traverser.Traverser(file_parser,
                                             checkers=loader.loaded_checkers,
-                                            include_filters=include_filters,
-                                            exclude_filters=exclude_filters,
-                                            verbose=True if args.verbose else False)
+                                            include_filters=includes,
+                                            exclude_filters=excludes,
+                                            verbose=is_verbose)
 
-    project_traverser.traverse(args.path)
-
-
-if __name__ == '__main__':
-    main()
+    project_traverser.traverse(path)

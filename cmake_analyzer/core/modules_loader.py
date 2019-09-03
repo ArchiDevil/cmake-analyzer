@@ -4,7 +4,7 @@ import sys
 import inspect
 import fnmatch
 
-import core.module_base
+from .module_base import SingleFileChecker
 
 
 class ModulesLoader(object):
@@ -26,7 +26,7 @@ class ModulesLoader(object):
     def __load_checkers(self, module):
         classes = inspect.getmembers(module, inspect.isclass)
         for _, class_type in classes:
-            if class_type.__bases__[0] == core.module_base.SingleFileChecker:
+            if class_type.__bases__[0] == SingleFileChecker:
                 class_object = class_type()
                 if self.__check_imported_checker(class_object):
                     self.checkers.append(class_object)

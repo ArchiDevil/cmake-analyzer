@@ -1,7 +1,7 @@
 import os
 
-from core import module_base
-from core.reporter_base import create_diagnostic
+from cmake_analyzer.core import module_base
+from cmake_analyzer.core.reporter_base import create_diagnostic
 
 
 class AddDefinitionsFinder(module_base.SingleFileChecker):

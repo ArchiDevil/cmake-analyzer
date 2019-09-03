@@ -1,7 +1,8 @@
-from reporters import simple
-from core import reporter_base
 from collections import namedtuple
 import builtins
+
+from cmake_analyzer.reporters import simple
+from cmake_analyzer.core import reporter_base
 
 Parseinfo = namedtuple('Parseinfo', 'line')
 
@@ -18,6 +19,7 @@ def test_can_create_diagnostic_from_node():
     assert diag.file == file
     assert diag.message == message
     assert diag.module == module
+
 
 
 def test_simple_reporter_reports_in_console():

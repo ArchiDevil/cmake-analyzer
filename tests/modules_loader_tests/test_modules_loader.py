@@ -1,6 +1,6 @@
 import os
 
-from core import modules_loader
+from cmake_analyzer.core import modules_loader
 
 CURRENT_MODULE_PATH = os.path.dirname(__file__)
 TEST_MODULES_PATH = os.path.join(CURRENT_MODULE_PATH, 'test_modules')

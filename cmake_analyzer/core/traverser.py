@@ -3,9 +3,9 @@ import os
 import re
 import fnmatch
 
-from core.parser import CMakeParser
-from core.reporter_base import create_full_diagnostic
-from reporters import simple
+from .parser import CMakeParser
+from .reporter_base import create_full_diagnostic
+from ..reporters import simple
 
 
 class Mode(Enum):

@@ -1,4 +1,4 @@
-from core import module_base
+from cmake_analyzer.core import module_base
 
 
 class TestCheckerCustomModule(module_base.SingleFileChecker):
