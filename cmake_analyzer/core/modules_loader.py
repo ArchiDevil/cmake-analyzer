@@ -7,7 +7,7 @@ import fnmatch
 from .module_base import SingleFileChecker
 
 
-class ModulesLoader(object):
+class ModulesLoader:
     def __init__(self, modules_paths, filters=['*']):
         self.modules_paths = modules_paths
         self.modules = []
@@ -16,7 +16,8 @@ class ModulesLoader(object):
         for path in self.modules_paths:
             self.__load_modules(path)
 
-    def __check_imported_checker(self, checker):
+    @staticmethod
+    def __check_imported_checker(checker):
         for attribute in ['process_directory', 'process_file', 'end_processing']:
             attr = getattr(checker, attribute, None)
             if attr and callable(attr):
@@ -28,7 +29,7 @@ class ModulesLoader(object):
         for _, class_type in classes:
             if class_type.__bases__[0] == SingleFileChecker:
                 class_object = class_type()
-                if self.__check_imported_checker(class_object):
+                if ModulesLoader.__check_imported_checker(class_object):
                     self.checkers.append(class_object)
 
     def __match_filters(self, filename):

@@ -1,5 +1,3 @@
-import os
-
 from cmake_analyzer.core import module_base
 from cmake_analyzer.core.reporter_base import create_diagnostic
 
@@ -7,7 +5,8 @@ from cmake_analyzer.core.reporter_base import create_diagnostic
 class AddDefinitionsFinder(module_base.SingleFileChecker):
     error = 'Do not use add_definitions() command. It was superseeded by add_compile_definitions/include_directories/add_compile_options. Use these commands instead.'
 
-    def process_file(self, ast, root_directory, filename):
+    @staticmethod
+    def process_file(ast, _1, _2):
         diags = []
 
         for node in ast:

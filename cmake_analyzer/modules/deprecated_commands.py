@@ -1,5 +1,3 @@
-import os
-
 from cmake_analyzer.core import module_base
 from cmake_analyzer.core.reporter_base import create_diagnostic
 
@@ -23,7 +21,8 @@ class DeprecatedCommandsChecker(module_base.SingleFileChecker):
                            'variable_requires',
                            'write_file']
 
-    def process_file(self, ast, root_directory, filename):
+    @staticmethod
+    def process_file(ast, _1, _2):
         diags = []
 
         for node in ast:

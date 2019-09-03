@@ -1,5 +1,3 @@
-import os
-
 from cmake_analyzer.core import module_base
 from cmake_analyzer.core.reporter_base import create_diagnostic
 
@@ -7,7 +5,8 @@ from cmake_analyzer.core.reporter_base import create_diagnostic
 class AccessModifiersChecker(module_base.SingleFileChecker):
     error = 'Do not use target_link_libraries command without access specifiers.'
 
-    def process_file(self, ast, root_directory, filename):
+    @staticmethod
+    def process_file(ast, _1, _2):
         diags = []
 
         for node in ast:

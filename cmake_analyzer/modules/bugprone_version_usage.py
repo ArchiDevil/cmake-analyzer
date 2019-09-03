@@ -1,5 +1,3 @@
-import os
-
 from cmake_analyzer.core import module_base
 from cmake_analyzer.core.reporter_base import create_diagnostic
 
@@ -13,16 +11,16 @@ class VersionUsageChecker(module_base.SingleFileChecker):
         return filename == 'CMakeLists.txt'
 
     @staticmethod
-    def __process_minimum_required(filename, command_node):
+    def __process_minimum_required(command_node):
         return [create_diagnostic(command_node, VersionUsageChecker.minimum_required_error)]
 
     @staticmethod
-    def __process_policy(filename, command_node):
+    def __process_policy(command_node):
         if command_node['args'][0]['arg'][0].upper() != 'VERSION':
             return []
         return [create_diagnostic(command_node, VersionUsageChecker.policy_error)]
 
-    def process_file(self, ast, root_directory, filename):
+    def process_file(self, ast, _, filename):
         diags = []
 
         if VersionUsageChecker.__is_root_cmake(filename):
@@ -33,10 +31,9 @@ class VersionUsageChecker(module_base.SingleFileChecker):
                 continue
 
             if node['command']['name'].lower() == 'cmake_minimum_required':
-                diags += self.__process_minimum_required(
-                    filename, node['command'])
+                diags += self.__process_minimum_required(node['command'])
 
             if node['command']['name'].lower() == 'cmake_policy':
-                diags += self.__process_policy(filename, node['command'])
+                diags += self.__process_policy(node['command'])
 
         return diags

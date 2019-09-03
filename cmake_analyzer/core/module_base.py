@@ -1,2 +1,2 @@
-class SingleFileChecker(object):
+class SingleFileChecker:
     pass

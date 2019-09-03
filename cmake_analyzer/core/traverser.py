@@ -12,7 +12,7 @@ class Mode(Enum):
     GLOBAL = 0
 
 
-class Traverser(object):
+class Traverser:
     def __init__(self,
                  parser: CMakeParser,
                  checkers=[],
@@ -97,8 +97,9 @@ class Traverser(object):
                 if Traverser.__in_filter(self.exclude_filters, full_path):
                     continue
 
-                if self.include_filters and not Traverser.__in_filter(self.include_filters, full_path):
-                    continue
+                if self.include_filters:
+                    if not Traverser.__in_filter(self.include_filters, full_path):
+                        continue
 
                 if not re.findall(r'(CMakeLists\.txt|.*\.cmake)', filename):
                     continue

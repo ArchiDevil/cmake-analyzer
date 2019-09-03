@@ -1,11 +1,9 @@
 import argparse
-import tatsu
-import json
 import sys
 import os
 from typing import Tuple
 
-from .core import *
+from .core import modules_loader, traverser, parser
 
 CURRENT_FILE_DIR = os.path.dirname(__file__)
 
@@ -48,8 +46,8 @@ def create_parser() -> argparse.ArgumentParser:
     return argparser
 
 
-def parse_args(parser, args) -> Tuple[list, list, list, bool, list, bool, str]:
-    args = parser.parse_args(args)
+def parse_args(argparser, args) -> Tuple[list, list, list, bool, list, bool, str]:
+    args = argparser.parse_args(args)
 
     include_filters = args.include
     exclude_filters = args.exclude
@@ -61,7 +59,7 @@ def parse_args(parser, args) -> Tuple[list, list, list, bool, list, bool, str]:
     if args.custom_checks:
         modules_list.append(args.custom_checks)
 
-    do_list_checks = True if args.list_checks else False
+    do_list_checks = bool(args.list_checks)
 
     return include_filters, exclude_filters, modules_list, do_list_checks, args.checks, args.verbose, args.path
 
