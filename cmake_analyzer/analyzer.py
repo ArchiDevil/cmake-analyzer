@@ -64,10 +64,10 @@ def parse_args(argparser, args) -> Tuple[list, list, list, bool, list, bool, str
     return include_filters, exclude_filters, modules_list, do_list_checks, args.checks, args.verbose, args.path
 
 
-def main():
+def main(args):
     argparser = create_parser()
     includes, excludes, modules, do_list_checks, checks, is_verbose, path = parse_args(
-        argparser, sys.argv[1:])
+        argparser, args[1:])
 
     if do_list_checks:
         loader = modules_loader.ModulesLoader(modules)
@@ -85,3 +85,6 @@ def main():
                                             verbose=is_verbose)
 
     project_traverser.traverse(path)
+
+def entrypoint():
+    main(sys.argv)

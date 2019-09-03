@@ -6,7 +6,7 @@ class AccessModifiersChecker(module_base.SingleFileChecker):
     error = 'Do not use target_link_libraries command without access specifiers.'
 
     @staticmethod
-    def process_file(ast, _1, _2):
+    def process_file(ast, root_directory, filename):
         diags = []
 
         for node in ast:

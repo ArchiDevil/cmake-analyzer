@@ -20,7 +20,7 @@ class VersionUsageChecker(module_base.SingleFileChecker):
             return []
         return [create_diagnostic(command_node, VersionUsageChecker.policy_error)]
 
-    def process_file(self, ast, _, filename):
+    def process_file(self, ast, root_directory, filename):
         diags = []
 
         if VersionUsageChecker.__is_root_cmake(filename):

@@ -6,7 +6,7 @@ class AddDefinitionsFinder(module_base.SingleFileChecker):
     error = 'Do not use add_definitions() command. It was superseeded by add_compile_definitions/include_directories/add_compile_options. Use these commands instead.'
 
     @staticmethod
-    def process_file(ast, _1, _2):
+    def process_file(ast, root_directory, filename):
         diags = []
 
         for node in ast:

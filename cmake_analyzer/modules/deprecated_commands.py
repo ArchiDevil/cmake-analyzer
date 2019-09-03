@@ -22,7 +22,7 @@ class DeprecatedCommandsChecker(module_base.SingleFileChecker):
                            'write_file']
 
     @staticmethod
-    def process_file(ast, _1, _2):
+    def process_file(ast, root_directory, filename):
         diags = []
 
         for node in ast:

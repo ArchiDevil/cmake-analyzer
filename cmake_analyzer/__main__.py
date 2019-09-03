@@ -1,3 +1,5 @@
+import sys
+
 from .analyzer import main
 
-main()
+main(sys.argv)
