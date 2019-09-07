@@ -12,7 +12,7 @@ def test_project_usage_skips_root():
     diags = c.process_file(p.parse_file(os.path.join(CURRENT_MODULE_PATH, 'test_file.txt')),
                            '/some/directory/',
                            'CMakeLists.txt')
-    assert len(diags) == 0
+    assert not diags
 
 
 def test_project_usage_finds_errors_in_underlying():
@@ -22,3 +22,6 @@ def test_project_usage_finds_errors_in_underlying():
                            '/some/directory/',
                            'inner/CMakeLists.txt')
     assert len(diags) == 2
+    lines = [1, 3]
+    for i, diag in enumerate(diags):
+        assert lines[i] == diag.line

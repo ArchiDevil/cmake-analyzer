@@ -13,3 +13,6 @@ def test_add_definitions_is_found():
                            '/some/directory/',
                            'CMakeLists.txt')
     assert len(diags) == 2
+    lines = [1, 2]
+    for i, diag in enumerate(diags):
+        assert lines[i] == diag.line

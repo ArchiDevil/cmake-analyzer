@@ -13,3 +13,6 @@ def test_found_wrong_commands():
                            '/some/directory/',
                            'CMakeLists.txt')
     assert len(diags) == 2
+    lines = [11, 14]
+    for i, diag in enumerate(diags):
+        assert lines[i] == diag.line

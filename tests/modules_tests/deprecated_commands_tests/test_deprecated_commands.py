@@ -14,3 +14,6 @@ def test_deprecated_commands_checker_finds_deprecated_command():
     diags = c.process_file(ast, CURRENT_MODULE_PATH, file_to_check)
     assert isinstance(diags, list)
     assert len(diags) == 18
+    lines = [x + 1 for x in range(18)]
+    for i, diag in enumerate(diags):
+        assert lines[i] == diag.line
