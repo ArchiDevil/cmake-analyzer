@@ -1,0 +1,26 @@
+target_link_libraries(target1
+    LINK_PRIVATE
+        other_target0
+)
+
+target_link_libraries(target2
+    LINK_PRIVATE
+        other_target0
+    LINK_PUBLIC
+        other_target1
+        other_target2
+        other_target3
+        other_target4
+)
+
+target_link_libraries(target3
+    LINK_PUBLIC
+        other_target5
+)
+
+target_link_libraries(usual_target
+    PUBLIC
+        smth
+    PRIVATE
+        smth2
+)

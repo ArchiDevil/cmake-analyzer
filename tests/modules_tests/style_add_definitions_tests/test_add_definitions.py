@@ -3,16 +3,13 @@ import os
 from cmake_analyzer.modules import style_add_definitions
 from cmake_analyzer.core import parser
 
+from tests.modules_tests.generic_module_test_strawman import GenericModuleTestGenerator
+
 CURRENT_MODULE_PATH = os.path.dirname(__file__)
 
-
-def test_add_definitions_is_found():
-    p = parser.CMakeParser('cmake_analyzer/static/simple_grammar.ebnf')
-    c = style_add_definitions.AddDefinitionsFinder()
-    diags = c.process_file(p.parse_file(os.path.join(CURRENT_MODULE_PATH, 'test_file.txt')),
-                           '/some/directory/',
-                           'CMakeLists.txt')
-    assert len(diags) == 2
-    lines = [1, 2]
-    for i, diag in enumerate(diags):
-        assert lines[i] == diag.line
+GenericModuleTestGenerator(
+    globals(),
+    style_add_definitions.AddDefinitionsFinder(),
+    os.path.join(CURRENT_MODULE_PATH, 'test_file.txt'),
+    [1, 2]
+)

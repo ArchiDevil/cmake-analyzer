@@ -1,0 +1,5 @@
+qt5_use_modules(some_target some_qt_module)
+
+Qt5_USE_MODULES(some_target some_qt_module)
+
+nothing_to_see_here_command()
