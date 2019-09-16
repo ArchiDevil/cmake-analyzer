@@ -7,9 +7,10 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'TatSu'
+        'TatSu',
+        'PyYAML'
     ],
-    python_requires='>=3',
+    python_requires='>=3.5',
     entry_points={
         'console_scripts': [
             'cmake_analyzer=cmake_analyzer.analyzer:entrypoint',
