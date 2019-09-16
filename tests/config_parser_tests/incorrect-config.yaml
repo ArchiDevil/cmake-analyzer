@@ -1,0 +1,5 @@
+just_options:
+  - opt1:
+    - {k: v}
+  - opt2:
+    - {k: v}

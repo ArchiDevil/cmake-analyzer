@@ -3,9 +3,7 @@ import sys
 import os
 from collections import namedtuple
 
-import yaml
-
-from .core import modules_loader, traverser, parser
+from .core import modules_loader, traverser, parser, config_parser
 
 CURRENT_FILE_DIR = os.path.dirname(__file__)
 
@@ -89,8 +87,8 @@ def main(args) -> None:
 
     config = {}
     if parsed_args.config_path:
-        with open(parsed_args.config_path) as config_stream:
-            config = yaml.safe_load(config_stream)
+        yaml_parser = config_parser.ConfigParser(parsed_args.config_path)
+        config = yaml_parser.config
 
     loader = modules_loader.ModulesLoader(
         parsed_args.modules_list, parsed_args.checks)

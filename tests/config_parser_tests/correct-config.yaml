@@ -1,0 +1,5 @@
+module_options:
+  - module1:
+    - {k: v}
+  - module2:
+    - {k: v}
