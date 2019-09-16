@@ -101,7 +101,7 @@ class Traverser:
                     if not Traverser.__in_filter(self.include_filters, full_path):
                         continue
 
-                if not re.findall(r'(CMakeLists\.txt|.*\.cmake)', filename):
+                if not re.findall(r'(CMakeLists\.txt|.*\.cmake)$', filename):
                     continue
 
                 self.__process_file(root_path, full_path)

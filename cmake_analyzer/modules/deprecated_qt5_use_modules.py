@@ -10,10 +10,7 @@ class DeprecatedQt5UseModulesChecker(module_base.SingleFileChecker):
         diags = []
 
         for node in ast:
-            if not 'command' in node.keys():
-                continue
-                
-            if node['command']['name'].lower() == 'qt5_use_modules':
+            if node['name'].lower() == 'qt5_use_modules':
                 diag = create_diagnostic(
                     node, DeprecatedQt5UseModulesChecker.error)
                 diags.append(diag)

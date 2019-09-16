@@ -16,7 +16,7 @@ class VersionUsageChecker(module_base.SingleFileChecker):
 
     @staticmethod
     def __process_policy(command_node):
-        if command_node['args'][0]['arg'][0].upper() != 'VERSION':
+        if command_node['args'][0]['arg'].upper() != 'VERSION':
             return []
         return [create_diagnostic(command_node, VersionUsageChecker.policy_error)]
 
@@ -27,13 +27,10 @@ class VersionUsageChecker(module_base.SingleFileChecker):
             return []
 
         for node in ast:
-            if 'command' not in node.keys():
-                continue
+            if node['name'].lower() == 'cmake_minimum_required':
+                diags += self.__process_minimum_required(node)
 
-            if node['command']['name'].lower() == 'cmake_minimum_required':
-                diags += self.__process_minimum_required(node['command'])
-
-            if node['command']['name'].lower() == 'cmake_policy':
-                diags += self.__process_policy(node['command'])
+            if node['name'].lower() == 'cmake_policy':
+                diags += self.__process_policy(node)
 
         return diags

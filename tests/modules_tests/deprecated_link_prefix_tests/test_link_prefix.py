@@ -11,5 +11,5 @@ GenericModuleTestGenerator(
     globals(),
     deprecated_link_prefix.DeprecatedLinkPrefixChecker(),
     os.path.join(CURRENT_MODULE_PATH, 'link_prefix_test.txt'),
-    [1, 6, 16]
+    [1, 6, 16, 21]
 )

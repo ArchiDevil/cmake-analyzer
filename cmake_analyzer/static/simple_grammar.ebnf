@@ -1,5 +1,4 @@
 @@grammar     :: CMake
-@@whitespace  :: //
 @@parseinfo   :: True
 @@eol_comments:: /#.*$/
 
@@ -15,24 +14,23 @@
 # bracket_close       =  ']' {'='}* ']';
 
 file
-    =
+    = 
     {file_element}* $
     ;
 
 file_element
     =
-    | command:command_invocation line_ending
-    | {space}* empty:line_ending
+    command_invocation
     ;
 
 command_invocation
-    =
-    {space}* name:identifier {space}* '(' args:arguments ')'
+    = 
+    name:identifier "(" args:arguments ")"
     ;
 
 # optimized it a bit to avoid splitting args into head/tail structure instead of having just an array;
 # arguments           =  [argument] {separated_arguments}*;
-# separated_arguments =  {separation} [arg:argument] | {separation}* '(' args:arguments ')';
+# separated_arguments =  [arg:argument] | '(' args:arguments ')';
 arguments
     =
     {separated_arguments}*
@@ -40,8 +38,8 @@ arguments
 
 separated_arguments
     =
-    | {separation}* '(' args:arguments ')'
-    | {separation}* [arg:argument]
+    | '(' args:arguments ')'
+    | [arg:argument]
     ;
 
 argument
@@ -52,7 +50,7 @@ argument
 
 unquoted_argument
     =
-    {unquoted_element}+
+    unquoted_element
     ;
 
 # this is different that the one on CMake website because unquoted args can contain "" symbols but not at the beginning;
@@ -77,7 +75,7 @@ quoted_element
 
 quoted_continuation
     =
-    '\' newline
+    '\'
     ;
 
 escape_sequence
@@ -85,17 +83,6 @@ escape_sequence
     | escape_identity
     | escape_encoded
     | escape_semicolon
-    ;
-
-separation
-    =
-    | space
-    | line_ending
-    ;
-
-line_ending
-    =
-    [space] (newline | $)
     ;
 
 escape_identity
@@ -118,14 +105,4 @@ escape_semicolon
 identifier
     =
     /[A-Za-z_][A-Za-z0-9_]*/
-    ;
-
-space
-    =
-    /[ \t]+/
-    ;
-
-newline
-    =
-    /\n/
     ;

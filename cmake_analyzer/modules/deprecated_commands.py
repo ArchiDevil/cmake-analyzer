@@ -1,6 +1,7 @@
 from cmake_analyzer.core import module_base
 from cmake_analyzer.core.reporter_base import create_diagnostic
 
+
 class DeprecatedCommandsChecker(module_base.SingleFileChecker):
     deprecated_commands = ['build_name',
                            'exec_program',
@@ -26,10 +27,7 @@ class DeprecatedCommandsChecker(module_base.SingleFileChecker):
         diags = []
 
         for node in ast:
-            if not 'command' in node.keys():
-                continue
-
-            command_name = node['command']['name'].lower()
+            command_name = node['name'].lower()
 
             if command_name in DeprecatedCommandsChecker.deprecated_commands:
                 diag = create_diagnostic(node,

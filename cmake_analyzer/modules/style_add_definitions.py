@@ -10,10 +10,7 @@ class AddDefinitionsFinder(module_base.SingleFileChecker):
         diags = []
 
         for node in ast:
-            if 'command' not in node.keys():
-                continue
-
-            if node['command']['name'].lower() == 'add_definitions':
+            if node['name'].lower() == 'add_definitions':
                 diags.append(create_diagnostic(
                     node, AddDefinitionsFinder.error))
 

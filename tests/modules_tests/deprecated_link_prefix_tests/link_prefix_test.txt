@@ -18,6 +18,12 @@ target_link_libraries(target3
         other_target5
 )
 
+target_link_libraries(target3
+        "something that is long and correct"
+    LINK_PUBLIC
+        other_target5
+)
+
 target_link_libraries(usual_target
     PUBLIC
         smth

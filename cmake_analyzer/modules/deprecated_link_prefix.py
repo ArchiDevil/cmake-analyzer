@@ -7,18 +7,15 @@ class DeprecatedLinkPrefixChecker(module_base.SingleFileChecker):
 
     @staticmethod
     def __find_diag(node):
-        if not 'command' in node.keys():
-            return False
-
-        command_name = node['command']['name'].lower()
+        command_name = node['name'].lower()
         if command_name != 'target_link_libraries':
             return False
 
-        for arg in node['command']['args']:
-            if isinstance(arg, list):
+        for arg in node['args']:
+            # this is a quoted arg which could not be LINK_PRIVATE or LINK_PUBLIC
+            if isinstance(arg['arg'], list):
                 continue
-
-            arg_val = arg['arg'][0].lower()
+            arg_val = arg['arg'].lower()
             if arg_val in ['link_public', 'link_private']:
                 return True
         return False

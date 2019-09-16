@@ -10,16 +10,10 @@ class AccessModifiersChecker(module_base.SingleFileChecker):
         diags = []
 
         for node in ast:
-            if 'command' not in node.keys():
-                continue
-
-            if node['command']['name'].lower() == 'target_link_libraries':
+            if node['name'].lower() == 'target_link_libraries':
                 found = False
-                for arg_node in node['command']['args']:
-                    if not isinstance(arg_node, dict):
-                        continue
-
-                    if arg_node['arg'][0] in ['PUBLIC', 'PRIVATE', 'INTERFACE']:
+                for arg_node in node['args']:
+                    if arg_node['arg'] in ['PUBLIC', 'PRIVATE', 'INTERFACE']:
                         found = True
 
                 if not found:
