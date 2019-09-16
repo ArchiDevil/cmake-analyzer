@@ -20,7 +20,8 @@ class Traverser:
                  include_filters=None,
                  exclude_filters=None,
                  mode=Mode.GLOBAL,
-                 verbose=False):
+                 verbose=False,
+                 config={}):
         if not parser or not isinstance(parser, CMakeParser):
             raise TypeError('parser argument must be of type CMakeParser()')
 
@@ -38,6 +39,7 @@ class Traverser:
         self.verbose = verbose
         self.include_filters = include_filters
         self.exclude_filters = exclude_filters
+        self.config = config
 
     @staticmethod
     def __in_filter(filters, path):
