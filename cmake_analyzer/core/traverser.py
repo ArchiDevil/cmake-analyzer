@@ -40,6 +40,22 @@ class Traverser:
         self.include_filters = include_filters
         self.exclude_filters = exclude_filters
         self.config = config
+        self.__set_module_options()
+
+    def __set_module_options(self):
+        if 'module_options' not in self.config.keys():
+            return
+
+        for checker in self.checkers:
+            for module in self.config['module_options']:
+                if not checker.__module__ in module:
+                    continue
+
+                if not getattr(checker, 'set_config', None):
+                    continue
+
+                checker_config = module[checker.__module__]
+                checker.set_config(config=checker_config)
 
     @staticmethod
     def __in_filter(filters, path):
@@ -59,13 +75,16 @@ class Traverser:
         ast = self.parser.parse_file(full_path)
 
         for checker in self.checkers:
-            if getattr(checker, 'process_file', None):
-                results = checker.process_file(ast=ast,
-                                               root_directory=root_path,
-                                               filename=os.path.relpath(full_path, root_path))
-                for result in results:
-                    diagnostics.append(create_full_diagnostic(
-                        result, full_path, checker.__module__))
+            if not getattr(checker, 'process_file', None):
+                continue
+
+            results = checker.process_file(ast=ast,
+                                           root_directory=root_path,
+                                           filename=os.path.relpath(
+                                               full_path, root_path))
+            for result in results:
+                diagnostics.append(create_full_diagnostic(
+                    result, full_path, checker.__module__))
 
         for reporter in self.reporters:
             reporter.report(diagnostics)
@@ -85,10 +104,12 @@ class Traverser:
         for dirname, _, filenames in os.walk(path):
             diagnostics = []
             for checker in self.checkers:
-                if getattr(checker, 'process_directory', None):
-                    results = checker.process_directory(root_directory=root_path,
-                                                        dirname=dirname)
-                    diagnostics += results
+                if not getattr(checker, 'process_directory', None):
+                    continue
+
+                results = checker.process_directory(root_directory=root_path,
+                                                    dirname=dirname)
+                diagnostics += results
 
             for reporter in self.reporters:
                 reporter.report(diagnostics)
@@ -110,9 +131,11 @@ class Traverser:
 
         diagnostics = []
         for checker in self.checkers:
-            if getattr(checker, 'end_processing', None):
-                results = checker.end_processing()
-                diagnostics += results
+            if not getattr(checker, 'end_processing', None):
+                continue
+
+            results = checker.end_processing()
+            diagnostics += results
 
         for reporter in self.reporters:
             reporter.report(diagnostics)

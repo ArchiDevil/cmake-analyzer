@@ -26,6 +26,7 @@ class SimpleReporter(object):
 class SimpleCheckerFile(object):
     def __init__(self):
         self.checked_modules = []
+        self.__module__ = 'another_test'
 
     def process_file(self, ast, root_directory, filename):
         assert not os.path.isabs(filename)
@@ -177,3 +178,73 @@ def test_traverser_works_with_many_checkers():
     assert len(checkers[0].checked_modules) == 3
     assert len(checkers[1].checked_dirs) == 3
     assert checkers[2].marker
+
+
+class CheckerWithConfig(object):
+    def __init__(self):
+        self.__cfg = None
+        self.__module__ = 'test'
+
+    def set_config(self, config):
+        self.__cfg = config
+
+    @property
+    def config(self):
+        return self.__cfg
+
+
+def test_traverser_sets_config_to_checker():
+    checkers = [CheckerWithConfig()]
+    p = parser.CMakeParser(GRAMMAR_FILE)
+    config = {
+        'module_options': [
+            {
+                'test': [
+                    {'k1': 'v1'},
+                    {'k2': 'v2'}
+                ]
+            }
+        ]
+    }
+
+    t = traverser.Traverser(p, checkers=checkers, config=config)
+    assert checkers[0].config == config['module_options'][0]['test']
+
+
+def test_traverser_ignores_non_configurable_checkers():
+    checkers = [SimpleCheckerFile(), CheckerWithConfig()]
+    p = parser.CMakeParser(GRAMMAR_FILE)
+    config = {
+        'module_options': [
+            {
+                'test': [
+                    {'k1': 'v1'},
+                    {'k2': 'v2'}
+                ]
+            }
+        ]
+    }
+
+    t = traverser.Traverser(p, checkers=checkers, config=config)
+    assert checkers[1].config == config['module_options'][0]['test']
+
+
+def test_traverser_skips_configs_for_non_configurable_checkers():
+    checkers = [SimpleCheckerFile(), CheckerWithConfig()]
+    p = parser.CMakeParser(GRAMMAR_FILE)
+    config = {
+        'module_options': [
+            {
+                'test': [
+                    {'k1': 'v1'},
+                    {'k2': 'v2'}
+                ],
+                'another_test': [
+                    {'k3': 'v3'}
+                ]
+            }
+        ]
+    }
+
+    t = traverser.Traverser(p, checkers=checkers, config=config)
+    assert checkers[1].config == config['module_options'][0]['test']
