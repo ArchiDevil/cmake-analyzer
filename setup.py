@@ -12,7 +12,7 @@ setup(
     python_requires='>=3',
     entry_points={
         'console_scripts': [
-            'cmake_analyzer=cmake_analyzer.analyzer:entrypoint',
+            'cmana=cmake_analyzer.analyzer:entrypoint',
         ],
     },
 
