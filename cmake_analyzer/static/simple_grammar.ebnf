@@ -1,6 +1,5 @@
 @@grammar     :: CMake
 @@parseinfo   :: True
-@@eol_comments:: /#.*$/
 
 # bracket_argument is removed due to difficulty to implement it in these rules;
 # unquoted_legacy is also removed because I don't want to spend time on it;
@@ -20,7 +19,8 @@ file
 
 file_element
     =
-    command_invocation
+    | @:command_invocation {line_comment}
+    | line_comment
     ;
 
 command_invocation
@@ -46,6 +46,7 @@ argument
     =
     | quoted_argument
     | unquoted_argument
+    | line_comment
     ;
 
 unquoted_argument
@@ -105,4 +106,9 @@ escape_semicolon
 identifier
     =
     /[A-Za-z_][A-Za-z0-9_]*/
+    ;
+
+line_comment
+    =
+    /#.*$/
     ;
