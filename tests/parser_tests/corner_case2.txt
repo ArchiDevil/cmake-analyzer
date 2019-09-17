@@ -1,0 +1,7 @@
+#TODO
+list (APPEND _contents "#include \"${_sourceFileLocation}\"")
+# and some comment
+add_target(tgt
+           #internal comment
+           and_source_file.cpp
+)
