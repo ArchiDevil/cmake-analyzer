@@ -14,6 +14,22 @@ pipelines:
           script:
             - pip install -r requirements.txt
             - python -m pytest
+    release/*:
+      - step:
+          name: 'Testing'
+          caches:
+            - pip
+          script:
+            - pip install -r requirements.txt
+            - python -m pytest
+      - step:
+          name: 'Twine check'
+          caches:
+            - pip
+          script:
+            - pip install twine
+            - python ./setup.py sdist bdist_wheel
+            - twine check ./dist/*
   pull-requests:
     feature/*:
       - step:
