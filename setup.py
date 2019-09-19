@@ -1,8 +1,17 @@
 from setuptools import setup, find_packages
 
+SHORT_DESCRIPTION = 'CMake Analyzer (cmana) is a tool that helps developers to find common issues \
+in CMake code. It searches for deprecated commands/keywords, bad codestyle, \
+potential problems.'
+
+LONG_DESCRIPTION = open('README.md', encoding='utf-8').read()
+
 setup(
     name='cmake-analyzer',
-    version='0.1-rc2',
+    description=SHORT_DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
+    version='0.1rc3',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
@@ -16,13 +25,15 @@ setup(
         ],
     },
 
+    url='https://bitbucket.org/ArchiDevil/cmake-analyzer',
     project_urls={
-        "Homepage": "https://bitbucket.org/ArchiDevil/cmake-analyzer",
-        "Bug Tracker": "https://bitbucket.org/ArchiDevil/cmake-analyzer/issues",
-        "Source Code": "https://bitbucket.org/ArchiDevil/cmake-analyzer/src",
+        'Homepage': 'https://bitbucket.org/ArchiDevil/cmake-analyzer',
+        'Bug Tracker': 'https://bitbucket.org/ArchiDevil/cmake-analyzer/issues',
+        'Source Code': 'https://bitbucket.org/ArchiDevil/cmake-analyzer/src',
     },
 
     author='Denis Bezykornov',
+    author_email='archidevil52@gmail.com',
     keywords='cmake lint analyzer',
     classifiers=[
         'Topic :: Software Development :: Build Tools',
@@ -37,5 +48,6 @@ setup(
         'Operating System :: OS Independent',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License'
-    ]
+    ],
+    license='MIT'
 )
