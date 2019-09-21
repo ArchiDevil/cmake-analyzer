@@ -3,27 +3,63 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: python:3.7.3
-
 pipelines:
   branches:
     master:
-      - step:
-          caches:
-            - pip
-          script:
-            - pip install -r requirements.txt
-            - python -m pytest
+      - parallel:
+        - step:
+            name: 'Python 3.5 testing'
+            image: python:3.5
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
+        - step:
+            name: 'Python 3.6 testing'
+            image: python:3.6
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
+        - step:
+            name: 'Python 3.7 testing'
+            image: python:3.7
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
     release/*:
-      - step:
-          name: 'Testing'
-          caches:
-            - pip
-          script:
-            - pip install -r requirements.txt
-            - python -m pytest
+      - parallel:
+        - step:
+            name: 'Python 3.5 testing'
+            image: python:3.5
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
+        - step:
+            name: 'Python 3.6 testing'
+            image: python:3.6
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
+        - step:
+            name: 'Python 3.7 testing'
+            image: python:3.7
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
       - step:
           name: 'Twine check'
+          image: python:3.7
           caches:
             - pip
           script:
@@ -32,9 +68,28 @@ pipelines:
             - twine check ./dist/*
   pull-requests:
     feature/*:
-      - step:
-          caches:
-            - pip
-          script:
-            - pip install -r requirements.txt
-            - python -m pytest
+      - parallel:
+        - step:
+            name: 'Python 3.5 testing'
+            image: python:3.5
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
+        - step:
+            name: 'Python 3.6 testing'
+            image: python:3.6
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
+        - step:
+            name: 'Python 3.7 testing'
+            image: python:3.7
+            caches:
+              - pip
+            script:
+              - pip install -r requirements.txt
+              - python -m pytest
